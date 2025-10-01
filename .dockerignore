@@ -1,0 +1,8 @@
+node_modules
+npm-debug.log
+.env
+logs
+Notes.txt
+apiKeytest.js
+push_to_github.bat
+push_to_github.py
