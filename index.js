@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
+const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
@@ -8,7 +9,32 @@ const { v4: uuidv4 } = require('uuid');
 const app = express();
 app.use(express.json());
 
-const AUTH_TOKEN = process.env.TRANSLATE_AUTH_TOKEN || 'supersecrettoken';
+const allowedOrigins = [
+  'https://yourdomain.com',        
+  'https://www.yourdomain.com',    
+  'http://localhost:8080',         
+  'http://127.0.0.1:8080'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like curl or local tools)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('CORS not allowed for this origin: ' + origin));
+    }
+  },
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Optional: handle preflight OPTIONS requests globally
+app.options('*', cors());
+
+
+const AUTH_TOKEN = process.env.TRANSLATE_AUTH_TOKEN;
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
 // Helper: get log filename for today (daily rotation)
