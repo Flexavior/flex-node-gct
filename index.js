@@ -31,7 +31,15 @@ app.use(cors({
 }));
 
 // Optional: handle preflight OPTIONS requests globally
-app.options('*', cors());
+//pre-flight handler
+app.options('*', (req,res) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  res.sendStatus(204);
+});
+
+//app.options('*', cors());
 
 
 const AUTH_TOKEN = process.env.TRANSLATE_AUTH_TOKEN;
